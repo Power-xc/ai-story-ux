@@ -1,0 +1,85 @@
+<section class="proto" id="prototype" aria-labelledby="proto-h">
+  <h2 id="proto-h">
+    <span class="qn">프로토타입</span> <span class="qt">직접 눌러 보기</span>
+  </h2>
+  <p class="proto-note">
+    <strong>설명용 가상 화면 · 실제 크랙 화면이 아닙니다.</strong> 모든 대화와
+    캐릭터는 새로 만든 예시이고, 미리 써 둔 스크립트로만 움직입니다.
+  </p>
+  <div class="proto-grid">
+    <div class="proto-side">
+      <div
+        class="tabs"
+        role="tablist"
+        aria-label="프로토타입 시나리오"
+        id="scn-tabs"
+      >
+        <button
+          role="tab"
+          id="tab-a"
+          aria-controls="phone-body"
+          aria-selected="true"
+          data-scn="a"
+        >
+          <span class="tl">A</span>과정 보여 주기
+        </button>
+        <button
+          role="tab"
+          id="tab-b"
+          aria-controls="phone-body"
+          aria-selected="false"
+          tabindex="-1"
+          data-scn="b"
+        >
+          <span class="tl">B</span>근거 연결
+        </button>
+        <button
+          role="tab"
+          id="tab-c"
+          aria-controls="phone-body"
+          aria-selected="false"
+          tabindex="-1"
+          data-scn="c"
+        >
+          <span class="tl">C</span>위험 수준별 표시
+        </button>
+        <button
+          role="tab"
+          id="tab-d"
+          aria-controls="phone-body"
+          aria-selected="false"
+          tabindex="-1"
+          data-scn="d"
+        >
+          <span class="tl">D</span>사유 있는 복구
+        </button>
+        <button
+          role="tab"
+          id="tab-e"
+          aria-controls="phone-body"
+          aria-selected="false"
+          tabindex="-1"
+          data-scn="e"
+        >
+          <span class="tl">E</span>스토리 모드
+        </button>
+      </div>
+      <div class="scn-info" id="scn-info" aria-live="polite"></div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone" id="phone" role="group" aria-label="가상 채팅 화면">
+        <div class="phone-top">
+          <span class="phone-title" id="phone-title"></span
+          ><span class="tag-fake">가상</span>
+        </div>
+        <div
+          class="phone-body"
+          id="phone-body"
+          role="tabpanel"
+          tabindex="-1"
+        ></div>
+      </div>
+      <p class="phone-cap">설명용 가상 화면 · 실제 크랙 화면이 아닙니다</p>
+    </div>
+  </div>
+</section>
