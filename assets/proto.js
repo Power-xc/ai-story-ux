@@ -6,6 +6,7 @@
   var phone = document.getElementById("phone");
   var body = document.getElementById("phone-body");
   var titleEl = document.getElementById("phone-title");
+  var avatarEl = document.getElementById("phone-avatar");
   var infoEl = document.getElementById("scn-info");
   var tabs = Array.prototype.slice.call(
     document.querySelectorAll('#scn-tabs [role="tab"]'),
@@ -125,6 +126,7 @@
       role: "log",
       "aria-live": "polite",
       "aria-label": "대화",
+      tabindex: "0",
     });
   }
 
@@ -215,13 +217,16 @@
     var interp = 0,
       runId = 0,
       sent = false;
-    var input = h("input", {
-      class: "composer-input",
-      type: "text",
-      readonly: true,
-      value: A_Q,
-      "aria-label": "보낼 질문(예시)",
-    });
+    var input = h(
+      "textarea",
+      {
+        class: "composer-input",
+        rows: "2",
+        readonly: true,
+        "aria-label": "보낼 질문(예시)",
+      },
+      A_Q,
+    );
     var send = h(
       "button",
       { class: "send", type: "button", onclick: start },
@@ -298,7 +303,8 @@
               chip2focus();
             },
           },
-          "이렇게 이해했어요: " + A_INTERP[interp].text,
+          h("span", { class: "chip-l" }, "이렇게 이해했어요"),
+          h("span", { class: "chip-t" }, A_INTERP[interp].text),
           h("span", { class: "chip-edit" }, "고치기"),
         );
         slot.append(chip);
@@ -444,8 +450,7 @@
           return h(
             "span",
             { class: "sent" + (s.src ? "" : " no-src") },
-            s.t,
-            " ",
+            h("span", { class: "sent-t" }, s.t),
             s.src
               ? chipBtn(s.src, open)
               : h(
@@ -458,7 +463,6 @@
                   },
                   "근거 없음",
                 ),
-            " ",
           );
         }),
       ),
@@ -709,7 +713,6 @@
         "aria-haspopup": "dialog",
         onclick: openMenu,
       },
-      "…",
     );
     orig.append(menuBtn);
     chat.append(orig);
@@ -830,7 +833,11 @@
           ),
         ];
       }
-      var reply = bubble("ai", out, "msg-new");
+      var reply = bubble(
+        "ai",
+        [h("span", { class: "new-tag" }, "다시 씀"), out],
+        "msg-new",
+      );
       chat.append(reply);
       hint.textContent = "";
       hint.append("사유가 반영된 새 답이 나왔어요. 다른 사유도 보려면 ", reset);
@@ -890,7 +897,7 @@
       onclick: openNotes,
     });
     var recap = h(
-      "div",
+      "p",
       { class: "recap" },
       h("span", { class: "recap-l" }, "지난 이야기"),
       " 서리와 나는 어제 폭풍 속에서 등불을 지켰고, 새벽 종이 울리기 전에 돌아오기로 약속했다.",
@@ -898,15 +905,15 @@
     var head = h(
       "div",
       { class: "e-head" },
-      recap,
       h(
         "div",
-        { class: "e-bar" },
+        { class: "e-title" },
+        h("span", { class: "e-name" }, "해무항"),
         h("span", { class: "rule" }, "세계 규칙 · 해무항에는 마법이 없다"),
-        noteBtn,
       ),
+      noteBtn,
     );
-    body.append(head, chat, dockEl, status);
+    body.append(head, recap, chat, dockEl, status);
 
     chat.append(
       h(
@@ -934,7 +941,6 @@
         "aria-haspopup": "dialog",
         onclick: openMenu,
       },
-      "…",
     );
     charMsg.append(menuBtn);
     chat.append(charMsg);
@@ -1167,6 +1173,7 @@
         h(
           "div",
           { class: "msg msg-char msg-new" },
+          h("span", { class: "new-tag" }, "다시 씀"),
           h("span", { class: "who" }, "서리"),
           h("p", null, E_REWRITE[k].text),
           h("p", { class: "ref" }, h("b", null, "따른 설정"), " " + refText(k)),
@@ -1413,6 +1420,8 @@
     current = id;
     body.textContent = "";
     titleEl.textContent = s.title;
+    if (avatarEl)
+      avatarEl.className = "avatar" + (id === "e" ? " avatar-harbor" : "");
     tabs.forEach(function (t) {
       var on = t.getAttribute("data-scn") === id;
       t.setAttribute("aria-selected", on ? "true" : "false");
