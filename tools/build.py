@@ -204,7 +204,22 @@ def print_try(kind, num):
     return f'<a class="try" href="{href}">▶ 프로토타입 {esc(label)}</a>'
 
 
+CRACK = "크랙에 옮기면: "
+
+
+def print_crack(h3, body, figures):
+    """Last page: the applied case, its two-step strip, then the closing line."""
+    *main, last = body
+    return (f'<section class="crack"><div class="q-head"><span class="q-n">2번 문항 · 크랙에 옮기면</span>'
+            f'<h2>{inline(h3[len(CRACK):])}</h2></div>'
+            f'<div class="crack-x">{render_body(main, "print")}</div>'
+            f'<div class="strip strip-2">{figures.get("crack", "")}</div>'
+            f'<div class="close">{render_body([last], "print")}</div></section>')
+
+
 def print_row(h3, body, figures):
+    if (h3 or "").startswith(CRACK):
+        return print_crack(h3, body, figures)
     m = re.match(r"(원칙|해결) (\d)\. (.+)", h3 or "")
     if m:
         kind, num, name = m.group(1), int(m.group(2)), m.group(3)
@@ -223,13 +238,16 @@ def print_row(h3, body, figures):
 
 
 def render_print(secs, figures):
-    """Resume-like A4 layout: question heading, then item title | details | figure."""
+    """A4, one unit per page: summary with key screens, question 1, question 2, the
+    applied case. Rows read item title | details | figure."""
     out = []
     for h2, subs in secs:
         m = re.match(r"(\d)\. (.+)", h2)
         rows = "".join(print_row(h3, body, figures) for h3, body in subs)
         if not m:
-            out.append(f'<section class="summary"><h2>{esc(h2)}</h2>{rows}</section>')
+            out.append(f'<section class="summary"><h2>{esc(h2)}</h2>{rows}</section>'
+                       '<section class="glance"><h2>프로토타입 주요 화면</h2>'
+                       f'<div class="strip strip-3">{figures.get("cover", "")}</div></section>')
             continue
         out.append(f'<section class="q"><div class="q-head"><span class="q-n">{m.group(1)}번 문항</span>'
                    f"<h2>{esc(m.group(2))}</h2></div>{rows}</section>")

@@ -69,10 +69,25 @@ async (page) => {
   const shot = (name, clip) =>
     p.screenshot({ path: OUT + name + ".png", clip });
 
+  const phoneBox = () => p.locator(".phone").boundingBox();
+  const toBottom = () =>
+    p.evaluate(() => {
+      const chat = document.querySelector(".phone .chat");
+      chat.scrollTop = chat.scrollHeight;
+    });
+
+  // cover strip: whole screens
   await go("a");
   await p.getByRole("button", { name: "보내기" }).click();
   await p.waitForTimeout(4000);
-  await shot("a", await chatCrop(".phone .chat > *:not(:first-child)"));
+  await p.mouse.move(0, 0);
+  await toBottom();
+  await shot("g-a", await phoneBox());
+
+  await go("b");
+  await p.getByRole("button", { name: "근거 자료 2 보기" }).click();
+  await p.waitForTimeout(500);
+  await shot("g-b", await phoneBox());
 
   await go("b");
   await shot("b", await chatCrop(".phone .chat > *"));
@@ -91,7 +106,8 @@ async (page) => {
   await shot("e-dock", await box(".phone .dock-e"));
 
   await go("e-memory", true);
-  await shot("e-memory", await sheetCrop(".phone .sheet .note"));
+  // two of the three memory groups are enough to show the controls
+  await shot("e-memory", await sheetCrop(".phone .sheet .ngroup:nth-of-type(2) .note"));
 
   // the scene opens on the cover and the recap of the last session
   await go("e");
@@ -99,21 +115,21 @@ async (page) => {
     document.querySelector(".phone .chat").scrollTop = 0;
   });
   await p.waitForTimeout(200);
-  await shot("e-open", await p.locator(".phone").boundingBox());
+  await shot("e-open", await phoneBox());
 
-  // the fix in one screen: the old line, the reason, the rewrite and the setting it followed
+  // the fix in two steps: pick the reason, then the rewrite with the setting it followed
+  await go("e-menu");
+  await shot("e-menu", await phoneBox());
+
   await go("e");
   await p.getByRole("button", { name: "캐릭터 메시지 메뉴 열기" }).click();
   await p.getByRole("button", { name: "설정과 맞지 않아요" }).click();
   // the short composer dock leaves room for the whole exchange
   await p.locator(".dial-opt", { hasText: "직접 쓰기" }).click();
   await p.mouse.move(0, 0);
-  await p.evaluate(() => {
-    const chat = document.querySelector(".phone .chat");
-    chat.scrollTop = chat.scrollHeight;
-  });
+  await toBottom();
   await p.waitForTimeout(300);
-  await shot("e-fix", await p.locator(".phone").boundingBox());
+  await shot("e-fix", await phoneBox());
 
   await ctx.close();
   return "ok";

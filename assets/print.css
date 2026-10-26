@@ -1,8 +1,9 @@
-/* A4 print layout for assignment.pdf. Resume-like: white page, ink type,
-   hairlines, question heading, then item title | details | figure. */
+/* A4 print layout for assignment.pdf, one unit per page:
+   1 summary + key screens, 2 question 1, 3 question 2, 4 the applied case.
+   White page, ink type, hairlines; rows read item title | details | figure. */
 @page {
   size: A4;
-  margin: 15mm 16mm 16mm;
+  margin: 16mm 16mm 18mm;
   @bottom-left {
     content: "박강근 · AI Story UX 사전 과제";
     font:
@@ -28,7 +29,7 @@
   --hair: #efefef;
   --tint: #f5f5f6;
   --accent: #d43b2a;
-  --fig-w: 44mm;
+  --fig-w: 40mm;
   --font:
     "Pretendard", "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic",
     sans-serif;
@@ -39,7 +40,7 @@
   print-color-adjust: exact;
 }
 html {
-  font: 400 9pt/1.62 var(--font);
+  font: 400 9pt/1.56 var(--font);
   color: var(--ink);
 }
 body {
@@ -120,9 +121,10 @@ h3 {
   line-height: 1.65;
 }
 
-/* question heading */
-.q {
-  margin-top: 8mm;
+/* each question and the applied case open a new page */
+.q,
+.crack {
+  break-before: page;
 }
 .q-head {
   padding-bottom: 2.6mm;
@@ -145,9 +147,9 @@ h3 {
 /* rows: item title | details (| figure) */
 .row {
   display: grid;
-  grid-template-columns: 33mm 1fr;
-  column-gap: 6mm;
-  padding: 3.1mm 0;
+  grid-template-columns: 31mm 1fr;
+  column-gap: 5mm;
+  padding: 2.6mm 0;
   border-top: 0.2mm solid var(--line);
 }
 .q-head + .row {
@@ -156,7 +158,7 @@ h3 {
 .row.has-fig .row-d {
   display: grid;
   grid-template-columns: 1fr var(--fig-w);
-  column-gap: 6mm;
+  column-gap: 5mm;
   align-items: start;
 }
 /* a line item never splits; a row with a picture stays whole */
@@ -283,6 +285,56 @@ thead th {
 tbody th {
   width: 22mm;
   font-weight: 700;
+}
+
+/* page 1: key screens */
+.glance {
+  margin-top: 7mm;
+}
+.glance > h2 {
+  margin-bottom: 3.4mm;
+  font-size: 8pt;
+  font-weight: 700;
+  color: var(--accent);
+}
+.strip {
+  display: grid;
+  align-items: start;
+}
+.strip-3 {
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 7mm;
+}
+.strip-2 {
+  grid-template-columns: repeat(2, 56mm);
+  justify-content: center;
+  column-gap: 12mm;
+  margin: 6mm 0 5mm;
+}
+
+/* last page: the applied case */
+.crack .q-head {
+  margin-bottom: 4mm;
+}
+.crack-x > p {
+  margin-bottom: 3mm;
+}
+.crack .tablewrap {
+  margin: 0;
+}
+.crack tbody th {
+  width: 30mm;
+}
+.close {
+  padding: 4mm 5mm;
+  background: var(--tint);
+  border-radius: 2mm;
+}
+.close p {
+  margin: 0;
+  font-size: 9.6pt;
+  font-weight: 500;
+  line-height: 1.65;
 }
 
 /* figures: real-size prototype screens */
