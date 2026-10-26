@@ -245,6 +245,11 @@ def main():
     exec(figures_src, ns)
     figures = ns["FIGURES"]
 
+    toc = "\n".join(
+        f'      <li><a href="#q{m.group(1)}"><span class="toc-n">{m.group(1)}번 문항</span><span class="toc-t">{esc(m.group(2))}</span></a></li>'
+        for m in (re.match(r"(\d)\. (.+)", h2) for h2, _ in secs) if m
+    ) + '\n      <li><a href="#prototype"><span class="toc-n">프로토타입</span><span class="toc-t">직접 눌러 보기</span></a></li>'
+
     head_common = (
         '<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'
         '<meta name="robots" content="noindex, nofollow">\n'
@@ -255,7 +260,7 @@ def main():
 {head_common}<title>AI Story UX: 사전 과제</title>
 <meta name="description" content="박강근의 뤼튼 Product Designer(AI Story본부) 사전 과제 답변과 직접 눌러 보는 프로토타입">
 <meta name="color-scheme" content="light">
-<meta name="theme-color" content="#fbfaf7">
+<meta name="theme-color" content="#ffffff">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="{FONT_CSS}">
 <link rel="stylesheet" href="assets/site.css">
@@ -271,9 +276,7 @@ def main():
     <p class="lede">제출한 PDF와 같은 답변에, 답변에 나온 화면 패턴을 직접 눌러 볼 수 있는 프로토타입을 더했습니다.</p>
     <p class="actions"><a class="btn btn-primary" href="assignment.pdf" download>PDF 내려받기</a> <a class="btn" href="#prototype">프로토타입 바로 가기</a></p>
     <nav class="toc" aria-label="이 페이지의 구성"><ul>
-      <li><a href="#q1">1번 문항 · UX 원칙</a></li>
-      <li><a href="#q2">2번 문항 · 할루시네이션</a></li>
-      <li><a href="#prototype">프로토타입</a></li>
+{toc}
     </ul></nav>
   </div>
 </header>
