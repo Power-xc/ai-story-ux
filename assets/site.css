@@ -172,7 +172,7 @@ a {
 }
 .kv > div {
   display: grid;
-  grid-template-columns: 44px 1fr;
+  grid-template-columns: 60px 1fr;
   gap: 10px;
 }
 .kv dt {
