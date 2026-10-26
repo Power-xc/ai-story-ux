@@ -44,7 +44,7 @@
     el.scrollTop = el.scrollHeight;
   }
 
-  /* ---------- 시트(근거 패널·메뉴·기억 노트) ---------- */
+  /* ---------- 시트(근거 패널·메뉴·기억) ---------- */
   var sheetState = null;
   function closeSheet() {
     if (!sheetState) return;
@@ -867,14 +867,17 @@
     tone: {
       label: "캐릭터답지 않아요",
       text: "왔네. 등불은 내가 켠다. 따라와.",
+      ref: "캐릭터 설정 · 서리는 말수가 적고 무뚝뚝하다",
     },
     prev: {
       label: "앞 내용과 달라요",
       text: "왔네. 새벽 종 전에 돌아온다고 했지. 안 늦었어.",
+      ref: "기억 · 약속",
     },
     rule: {
       label: "설정과 맞지 않아요",
       text: "왔네. 이 마을엔 마법이 없어. 등불은 성냥으로 켠다. 따라와.",
+      ref: "세계 규칙 · 해무항에는 마법이 없다",
     },
   };
 
@@ -949,7 +952,7 @@
     function updateNoteBtn() {
       noteBtn.textContent = "";
       noteBtn.append(
-        "기억 노트 ",
+        "기억 ",
         h("span", { class: "count" }, String(notes.length)),
       );
     }
@@ -1174,10 +1177,20 @@
           { class: "msg msg-char msg-new" },
           h("span", { class: "who" }, "서리"),
           h("p", null, E_REWRITE[k].text),
+          h("p", { class: "ref" }, h("b", null, "따른 설정"), " " + refText(k)),
         ),
       );
       scrollDown(chat);
       status.textContent = "이유를 반영해 다시 썼어요.";
+    }
+
+    // 다시 쓴 대사가 어떤 설정·기억을 따랐는지. 약속은 지금 기억에 남은 문장을 쓴다.
+    function refText(k) {
+      if (k !== "prev") return E_REWRITE[k].ref;
+      var p = notes.filter(function (n) {
+        return n.g === "약속";
+      })[0];
+      return p ? E_REWRITE[k].ref + ": " + p.t : "지난 이야기";
     }
 
     function openNotes(e) {
@@ -1329,7 +1342,7 @@
         return row;
       }
       paint();
-      openSheet("기억 노트", wrap, e && e.currentTarget);
+      openSheet("기억", wrap, e && e.currentTarget);
     }
     if (sub === "memory") openNotes({ currentTarget: noteBtn });
     else if (sub === "menu") openMenu({ currentTarget: menuBtn });
@@ -1390,8 +1403,8 @@
       head: "E. 스토리 모드 (크랙에 옮기면)",
       how: [
         "위쪽 “지난 이야기” 한 줄이 장면이 이어 갈 내용을 보여 줘요.",
-        "“기억 노트”에서 관계·사건·약속을 고정·수정·삭제하고, 선택지로 다음 답을 받아 보세요.",
-        "캐릭터 메시지의 “…” 메뉴에서 이유를 골라 다시 쓰게 해요.",
+        "“기억”에서 관계·사건·약속을 고정·수정·삭제하고, 선택지로 다음 답을 받아 보세요.",
+        "캐릭터 메시지의 “…” 메뉴에서 이유를 고르면, 다시 쓴 대사 아래에 따른 설정이 한 줄로 보여요.",
         "아래 관전/선택/직접 쓰기 다이얼로 개입 수준을 바꿔요.",
       ],
       back: "#crack",
@@ -1448,6 +1461,21 @@
       mount(tabs[n].getAttribute("data-scn"));
     });
   });
+
+  /* ---------- 실제 기기 크기 ---------- */
+  // iPhone 16 화면(393×852pt)을 비율 그대로 두고, 창이 작으면 통째로 줄인다.
+  var PHONE_W = 393,
+    PHONE_H = 852,
+    FIT_GAP = 72; // 캡션과 위아래 여백
+  function fitPhone() {
+    var wrap = phone.parentElement;
+    var z = (window.innerHeight - FIT_GAP) / PHONE_H;
+    if (!window.matchMedia("(min-width: 900px)").matches)
+      z = Math.min(z, wrap.parentElement.clientWidth / PHONE_W);
+    wrap.style.zoom = String(Math.max(0.5, Math.min(1, z)));
+  }
+  fitPhone();
+  window.addEventListener("resize", fitPhone);
 
   function fromHash(scroll) {
     var m = /^#proto-([a-e])(?:-(\w+))?$/.exec(location.hash);

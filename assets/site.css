@@ -526,20 +526,16 @@ tbody th {
 }
 .phone-wrap {
   justify-self: center;
-  width: 100%;
-  max-width: 344px;
+  width: 393px;
 }
 .phone {
   position: relative;
-  height: 680px;
-  max-height: 90svh;
-  min-height: 520px;
+  height: 852px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background: var(--bg);
   border: 1px solid var(--line);
-  border-radius: 28px;
   box-shadow: var(--shadow-card-lg);
 }
 .phone-top {
@@ -547,18 +543,49 @@ tbody th {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 12px 16px;
+  padding: 0 16px;
   background: var(--surface);
   border-bottom: 1px solid var(--line);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 17px;
+  min-height: 44px;
+}
+/* iPhone 16 screen: status bar 54pt, home indicator 34pt */
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 54px;
+  padding: 0 28px 0 44px;
+  background: var(--surface);
+  font: 600 17px var(--font);
+}
+.status svg {
+  fill: currentColor;
+}
+.home-ind {
+  position: relative;
+  z-index: 11;
+  height: 34px;
+  background: var(--surface);
+}
+.home-ind::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 134px;
+  height: 5px;
+  margin-left: -67px;
+  border-radius: 3px;
+  background: var(--ink);
 }
 .tag-fake {
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 99px;
   background: var(--tint);
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 .phone-body {
@@ -577,18 +604,18 @@ tbody th {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .msg {
   position: relative;
   max-width: 88%;
-  padding: 10px 12px;
-  border-radius: 14px;
-  font-size: 14.5px;
-  line-height: 1.6;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 16px;
+  line-height: 1.5;
   background: var(--surface);
   border: 1px solid var(--line);
 }
@@ -609,7 +636,7 @@ tbody th {
   background: var(--tint);
   border: 0;
   color: var(--ink);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 .msg-ai,
@@ -617,11 +644,23 @@ tbody th {
   align-self: flex-start;
 }
 .msg-menu {
-  padding-right: 38px;
+  padding-right: 44px;
 }
 .msg-new {
   border-color: var(--brand);
   box-shadow: 0 0 0 3px var(--brand-soft);
+}
+.msg .ref {
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--tint);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.ref b {
+  margin-right: 4px;
+  color: var(--muted);
 }
 .old {
   opacity: 0.62;
@@ -643,7 +682,7 @@ tbody th {
 .who {
   display: block;
   margin-bottom: 2px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--ink);
 }
@@ -651,19 +690,19 @@ tbody th {
   align-self: center;
   max-width: 92%;
   margin: 2px 0;
-  padding: 6px 10px;
+  padding: 8px 12px;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   background: var(--tint);
   border-radius: 10px;
 }
 .dots {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 32px;
-  height: 32px;
+  top: 0;
+  right: 0;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 50%;
   background: transparent;
@@ -675,13 +714,13 @@ tbody th {
   background: var(--tint);
 }
 .dock {
-  padding: 10px 12px 12px;
+  padding: 12px 16px;
   border-top: 1px solid var(--line);
   background: var(--surface);
 }
 .dock-note {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
 }
 .composer {
@@ -692,12 +731,12 @@ tbody th {
   flex: 1;
   min-width: 0;
   min-height: 44px;
-  padding: 0 12px;
+  padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: var(--btn-radius);
   background: #fff;
   color: var(--ink);
-  font: 14px var(--font);
+  font: 16px var(--font);
 }
 .send,
 .act,
@@ -707,13 +746,13 @@ tbody th {
 .reason,
 .notebtn,
 .sheet-close {
-  min-height: 40px;
-  padding: 0 14px;
+  min-height: 44px;
+  padding: 0 16px;
   border: 1px solid var(--line);
   border-radius: var(--btn-radius);
   background: #fff;
   color: var(--ink);
-  font: 600 14px var(--font);
+  font: 600 15px var(--font);
   cursor: pointer;
 }
 .send {
@@ -742,12 +781,12 @@ tbody th {
   margin-top: 8px;
   border-color: var(--line);
   color: var(--muted);
-  min-height: 38px;
-  font-size: 13px;
+  min-height: 44px;
+  font-size: 14px;
 }
 .hint {
   margin: 6px 0 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
 }
 .acts {
@@ -762,8 +801,8 @@ tbody th {
 .acts-col .act {
   text-align: left;
   border-radius: var(--btn-radius);
-  min-height: 38px;
-  padding: 6px 12px;
+  min-height: 44px;
+  padding: 8px 14px;
 }
 
 /* A */
@@ -777,7 +816,7 @@ tbody th {
   align-items: center;
   gap: 8px;
   margin: 0 0 4px;
-  font-size: 14px;
+  font-size: 15px;
 }
 .ic {
   width: 18px;
@@ -798,7 +837,7 @@ tbody th {
 }
 .st {
   margin-left: auto;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
 }
 .chip {
@@ -806,13 +845,13 @@ tbody th {
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  min-height: 40px;
-  padding: 4px 12px;
+  min-height: 44px;
+  padding: 6px 14px;
   border: 1px solid var(--line);
   border-radius: var(--btn-radius);
   background: var(--tint);
   color: var(--ink);
-  font: 600 13.5px/1.4 var(--font);
+  font: 600 15px/1.4 var(--font);
   text-align: left;
   cursor: pointer;
 }
@@ -821,7 +860,7 @@ tbody th {
   border-radius: 99px;
   background: var(--accent);
   color: #fff;
-  font-size: 12px;
+  font-size: 13px;
 }
 .picker {
   display: flex;
@@ -832,7 +871,7 @@ tbody th {
 .opt {
   border-radius: var(--btn-radius);
   text-align: left;
-  padding: 8px 12px;
+  padding: 10px 14px;
 }
 .opt[aria-pressed="true"] {
   background: var(--ink);
@@ -853,14 +892,14 @@ tbody th {
 .ev {
   display: inline-flex;
   align-items: center;
-  min-height: 26px;
+  min-height: 28px;
   margin: 0 2px;
   padding: 0 8px;
   border: 0;
   border-radius: 99px;
   background: var(--tint);
   color: var(--ink);
-  font: 600 12px var(--font);
+  font: 600 13px var(--font);
   vertical-align: 1px;
   cursor: pointer;
 }
@@ -883,13 +922,13 @@ tbody th {
 }
 .subtab {
   flex: none;
-  min-height: 40px;
-  padding: 0 10px;
+  min-height: 44px;
+  padding: 0 12px;
   border: 0;
   border-bottom: 3px solid transparent;
   background: transparent;
   color: var(--muted);
-  font: 600 13.5px var(--font);
+  font: 600 15px var(--font);
   cursor: pointer;
 }
 .subtab[aria-selected="true"] {
@@ -929,9 +968,9 @@ tbody th {
   width: 100%;
   max-height: 82%;
   overflow-y: auto;
-  padding: 14px 14px 18px;
+  padding: 16px 16px 50px;
   background: var(--surface);
-  border-radius: 20px 20px 0 0;
+  border-radius: 16px 16px 0 0;
   animation: rise 0.2s ease-out;
 }
 .sheet:focus {
@@ -946,23 +985,23 @@ tbody th {
 }
 .sheet-head h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
 }
 .sheet-close {
-  min-height: 38px;
+  min-height: 44px;
   border-color: var(--line);
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 .sheet-lead {
-  font-size: 13.5px;
+  font-size: 14px;
   color: var(--muted);
 }
 .quote {
   padding: 8px 10px;
   border-left: 3px solid var(--accent);
   background: var(--accent-soft);
-  font-size: 14px;
+  font-size: 15px;
 }
 .src {
   padding: 10px 12px;
@@ -972,13 +1011,13 @@ tbody th {
 }
 .src-t {
   margin: 0 0 4px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--muted);
 }
 .src-q {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
 }
 .src-q.none {
   color: var(--muted);
@@ -1007,11 +1046,11 @@ mark {
 .map-s {
   margin: 0;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
 }
 .map-a {
   margin: 2px 0 6px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
 }
 .reasons {
@@ -1022,15 +1061,15 @@ mark {
 .reason {
   border-radius: var(--btn-radius);
   text-align: left;
-  padding: 10px 14px;
+  padding: 12px 16px;
 }
 
 /* E */
 .e-head {
-  padding: 10px 12px;
+  padding: 12px 16px;
   background: var(--surface);
   border-bottom: 1px solid var(--line);
-  font-size: 13.5px;
+  font-size: 14px;
 }
 .recap {
   padding: 8px 10px;
@@ -1045,7 +1084,7 @@ mark {
   border-radius: 99px;
   background: var(--accent);
   color: #fff;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 .e-bar {
@@ -1057,20 +1096,20 @@ mark {
   margin-top: 8px;
 }
 .rule {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--muted);
 }
 .notebtn {
-  min-height: 38px;
-  font-size: 13px;
+  min-height: 44px;
+  font-size: 14px;
 }
 .count {
   display: inline-grid;
   place-items: center;
-  min-width: 20px;
-  height: 20px;
+  min-width: 22px;
+  height: 22px;
   margin-left: 2px;
-  border-radius: 10px;
+  border-radius: 11px;
   background: var(--accent);
   color: #fff;
   font-size: 12px;
@@ -1089,7 +1128,7 @@ mark {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 44px;
+  min-height: 48px;
   padding: 3px 4px;
   border: 0;
   border-radius: 99px;
@@ -1099,11 +1138,11 @@ mark {
   font-family: var(--font);
 }
 .dial-opt .dl {
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 700;
 }
 .dial-opt .ds {
-  font-size: 11.5px;
+  font-size: 12px;
 }
 .dial-opt[aria-checked="true"] {
   background: var(--accent);
@@ -1111,7 +1150,7 @@ mark {
 }
 .mode-area {
   margin-top: 6px;
-  max-height: 190px;
+  max-height: 240px;
   overflow-y: auto;
 }
 .ngroup {
@@ -1124,7 +1163,7 @@ mark {
 }
 .note {
   margin-bottom: 6px;
-  padding: 8px 10px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: 10px;
 }
@@ -1134,7 +1173,7 @@ mark {
 }
 .note-t {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
 }
 .tags {
   margin: 2px 0 0;
@@ -1163,9 +1202,9 @@ mark {
   margin-top: 6px;
 }
 .mini-btn {
-  min-height: 38px;
-  padding: 0 12px;
-  font-size: 13px;
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 14px;
 }
 .mini-btn[aria-pressed="true"] {
   background: var(--ink);
@@ -1213,7 +1252,7 @@ mark {
 
 @media (min-width: 900px) {
   .proto-grid {
-    grid-template-columns: 1fr 344px;
+    grid-template-columns: 1fr auto;
     align-items: start;
   }
   .phone-wrap {

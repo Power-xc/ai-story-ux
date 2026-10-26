@@ -17,7 +17,7 @@ FONT_CSS = "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/s
 TRY = {
     ("원칙", 1): ("e", "choice", "E · 선택지로 이어 가기"),
     ("원칙", 2): ("e", "dial", "E · 관전/선택/직접 쓰기"),
-    ("원칙", 3): ("e", "memory", "E · 기억 노트"),
+    ("원칙", 3): ("e", "memory", "E · 기억"),
     ("해결", 1): ("a", "", "A · 과정 보여 주기"),
     ("해결", 2): ("b", "", "B · 근거 연결"),
     ("해결", 3): ("c", "", "C · 위험 수준별 표시"),
@@ -26,7 +26,7 @@ TRY = {
 # first-column text of the "크랙에 옮기면" table -> (scenario, sub, label)
 TRY_ROWS = {
     "과정 보여 주기": ("e", "scene", "E · 지난 이야기"),
-    "근거 연결": ("e", "memory", "E · 기억 노트"),
+    "근거 연결": ("e", "menu", "E · 따른 설정"),
     "사유 있는 복구": ("e", "menu", "E · 다시 쓰기 메뉴"),
 }
 
@@ -209,23 +209,30 @@ def print_row(h3, body, figures):
     if m:
         kind, num, name = m.group(1), int(m.group(2)), m.group(3)
         head = f'<span class="n">{kind} {num}</span><h3>{esc(name)}</h3>{print_try(kind, num)}'
+        fig = figures.get((kind, num), "")
     elif h3:
-        head = f'<h3>{inline(h3)}</h3>{figures.get(h3, "")}'
+        head, fig = f"<h3>{inline(h3)}</h3>", figures.get(h3, "")
     else:
         return f'<div class="lead">{render_body(body, "print")}</div>'
-    return (f'<article class="row"><div class="row-t">{head}</div>'
-            f'<div class="row-d">{render_body(body, "print")}</div></article>')
+    text = render_body(body, "print")
+    if fig:
+        # the picture sits right of the text it illustrates
+        return (f'<article class="row has-fig"><div class="row-t">{head}</div>'
+                f'<div class="row-d"><div class="row-x">{text}</div>{fig}</div></article>')
+    return f'<article class="row"><div class="row-t">{head}</div><div class="row-d">{text}</div></article>'
 
 
 def render_print(secs, figures):
-    """Resume-like A4 layout: section label | item title | details."""
+    """Resume-like A4 layout: question heading, then item title | details | figure."""
     out = []
     for h2, subs in secs:
         m = re.match(r"(\d)\. (.+)", h2)
-        label = f"{m.group(1)}번 문항" if m else h2
-        head = f'<h2>{esc(m.group(2))}</h2>' if m else ""
         rows = "".join(print_row(h3, body, figures) for h3, body in subs)
-        out.append(f'<section class="sec"><div class="sec-l">{esc(label)}</div><div class="sec-r">{head}{rows}</div></section>')
+        if not m:
+            out.append(f'<section class="summary"><h2>{esc(h2)}</h2>{rows}</section>')
+            continue
+        out.append(f'<section class="q"><div class="q-head"><span class="q-n">{m.group(1)}번 문항</span>'
+                   f"<h2>{esc(m.group(2))}</h2></div>{rows}</section>")
     return "\n".join(out)
 
 
@@ -290,7 +297,8 @@ def main():
 <header class="top">
   <h1>AI Story UX 사전 과제</h1>
   <p class="meta"><strong>박강근</strong><span>Senior Product Designer</span><span>{esc(title.replace(" 사전 과제", ""))}</span><span>2026.10</span></p>
-  <p class="links"><strong>Prototype</strong><a href="{SITE_URL}">{SITE_URL.replace("https://", "").rstrip("/")}</a><span class="hint">직접 눌러 보는 프로토타입입니다. 각 항목의 ▶ 링크는 해당 화면으로 바로 이동합니다.</span></p>
+  <p class="links"><strong>Prototype</strong><a href="{SITE_URL}">{SITE_URL.replace("https://", "").rstrip("/")}</a><span class="hint">각 항목의 ▶ 링크를 누르면 그 화면에서 바로 눌러 볼 수 있습니다.</span></p>
+  <p class="note">그림은 프로토타입 화면을 실제 기기 크기(iPhone 16, 393×852pt)로 찍은 것입니다. 설명을 위해 새로 만든 가상 화면이며, 실제 크랙 화면이 아닙니다.</p>
 </header>
 <main>
 {render_print(secs, figures)}
