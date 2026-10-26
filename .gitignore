@@ -1,5 +1,6 @@
+__pycache__/
 .DS_Store
-node_modules/
 *.tmp.pdf
-shots/
+node_modules/
 REPORT.md
+shots/
