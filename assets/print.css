@@ -211,7 +211,7 @@ tr,
   margin: 0;
 }
 .lead .kv > div {
-  grid-template-columns: 9mm 1fr;
+  grid-template-columns: 15mm 1fr;
 }
 .lead .kv dt {
   padding-top: 0;
