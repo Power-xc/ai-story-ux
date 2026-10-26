@@ -259,6 +259,7 @@ def main():
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="{FONT_CSS}">
 <link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/proto.css">
 </head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>

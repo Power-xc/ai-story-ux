@@ -350,14 +350,7 @@
           setStep(k, "done");
           if (k === 0) renderChip(false);
         }
-        answer.append(
-          h("p", null, A_INTERP[interp].ans),
-          h(
-            "p",
-            { class: "hint" },
-            "다르게 이해했다면 위의 “이렇게 이해했어요” 칩을 눌러 고쳐 보세요.",
-          ),
-        );
+        answer.append(h("p", null, A_INTERP[interp].ans));
         scrollDown(chat);
       }
       run(0);
@@ -663,7 +656,6 @@
             { class: "acts" },
             act("올해 휴관일 보기", "(예시) 올해 휴관일 안내를 보여 줘요."),
             act("공지가 올라오면 알림 받기", "(예시) 알림을 켰다고 가정해요."),
-            act("질문 바꿔 보기", "(예시) 질문 입력창으로 돌아가요."),
           ),
           done,
         ]);
