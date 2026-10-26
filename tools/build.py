@@ -101,7 +101,7 @@ def render_table(rows, mode):
         cells = []
         for j, c in enumerate(r):
             extra = ""
-            hit = TRY_ROWS.get(r[0]) if j == len(r) - 1 else None
+            hit = TRY_ROWS.get(r[0]) if j == len(r) - 1 and mode == "web" else None
             if hit:
                 extra = f' {try_link(hit, mode, "row")}'
             if j == 0:
@@ -132,10 +132,20 @@ def render_flow(text):
     return '<ol class="flow" aria-label="네 단계">' + "".join(lis) + "</ol>"
 
 
+KV = re.compile(r"^\*\*(.+?)\*\* (.+)$")
+
+
+def render_kv(items):
+    rows = "".join(f'<div><dt>{esc(KV.match(t).group(1))}</dt><dd>{inline(KV.match(t).group(2))}</dd></div>' for t, _ in items)
+    return f'<dl class="kv">{rows}</dl>'
+
+
 def render_body(nodes, mode):
     out = []
     for kind, val in nodes:
-        if kind == "p":
+        if kind == "ul" and all(KV.match(t) and not subs for t, subs in val):
+            out.append(render_kv(val))
+        elif kind == "p":
             lbl = " lbl" if val.startswith("**") else ""
             out.append(f'<p class="{lbl.strip()}">{inline(val)}</p>' if lbl else f"<p>{inline(val)}</p>")
         elif kind == "ul":
@@ -167,7 +177,7 @@ def render_sub(h3, body, mode, figures):
     if h3 is None:
         return render_body(body, mode)
     fig = figures.get(h3, "")
-    cls = "sub sub-" + {"출발점: 무엇을 지키고, 무엇을 더해야 하는가": "start", "무엇부터 할까": "first"}.get(h3, "plain")
+    cls = "sub sub-" + {"출발점": "start", "무엇부터 할까": "first"}.get(h3, "plain")
     ident = {"무엇부터 할까": ' id="first"', '크랙에 옮기면: "설정 할루시네이션"': ' id="crack"'}.get(h3, "")
     return f'<section class="{cls}"{ident}><h3>{inline(h3)}</h3>\n{render_body(body, mode)}{fig}</section>'
 
@@ -177,8 +187,45 @@ def render_sections(secs, mode, figures):
     for n, (h2, subs) in enumerate(secs):
         m = re.match(r"(\d)\. (.+)", h2)
         inner = "\n".join(render_sub(h3, body, mode, figures) for h3, body in subs)
+        if not m:
+            out.append(f'<section class="question summary" id="summary"><h2>{esc(h2)}</h2>\n{inner}</section>')
+            continue
         out.append(f'<section class="question" id="q{m.group(1)}" aria-labelledby="q{m.group(1)}-h">'
                    f'<h2 id="q{m.group(1)}-h"><span class="qn">{m.group(1)}번 문항</span> <span class="qt">{esc(h2)}</span></h2>\n{inner}</section>')
+    return "\n".join(out)
+
+
+def print_try(kind, num):
+    t = TRY.get((kind, num))
+    if not t:
+        return ""
+    scn, sub, label = t
+    href = f"{SITE_URL}#proto-{scn}" + (f"-{sub}" if sub else "")
+    return f'<a class="try" href="{href}">▶ 프로토타입 {esc(label)}</a>'
+
+
+def print_row(h3, body, figures):
+    m = re.match(r"(원칙|해결) (\d)\. (.+)", h3 or "")
+    if m:
+        kind, num, name = m.group(1), int(m.group(2)), m.group(3)
+        head = f'<span class="n">{kind} {num}</span><h3>{esc(name)}</h3>{print_try(kind, num)}'
+    elif h3:
+        head = f'<h3>{inline(h3)}</h3>{figures.get(h3, "")}'
+    else:
+        return f'<div class="lead">{render_body(body, "print")}</div>'
+    return (f'<article class="row"><div class="row-t">{head}</div>'
+            f'<div class="row-d">{render_body(body, "print")}</div></article>')
+
+
+def render_print(secs, figures):
+    """Resume-like A4 layout: section label | item title | details."""
+    out = []
+    for h2, subs in secs:
+        m = re.match(r"(\d)\. (.+)", h2)
+        label = f"{m.group(1)}번 문항" if m else h2
+        head = f'<h2>{esc(m.group(2))}</h2>' if m else ""
+        rows = "".join(print_row(h3, body, figures) for h3, body in subs)
+        out.append(f'<section class="sec"><div class="sec-l">{esc(label)}</div><div class="sec-r">{head}{rows}</div></section>')
     return "\n".join(out)
 
 
@@ -240,18 +287,13 @@ def main():
 <link rel="stylesheet" href="assets/print.css">
 </head>
 <body>
-<header class="titleblock">
-  <p class="eyebrow">{esc(title)}</p>
-  <h1>AI Story UX: 사전 과제</h1>
-  <dl>
-    <div><dt>이름</dt><dd>박강근</dd></div>
-    <div><dt>직함</dt><dd>Senior Product Designer</dd></div>
-    <div><dt>날짜</dt><dd>2026.10</dd></div>
-    <div class="wide"><dt>프로토타입</dt><dd><a href="{SITE_URL}">{SITE_URL}</a> <span class="hint">직접 눌러 보는 프로토타입 · 각 항목의 ▶ 링크는 해당 화면으로 바로 이동합니다</span></dd></div>
-  </dl>
+<header class="top">
+  <h1>AI Story UX 사전 과제</h1>
+  <p class="meta"><strong>박강근</strong><span>Senior Product Designer</span><span>{esc(title.replace(" 사전 과제", ""))}</span><span>2026.10</span></p>
+  <p class="links"><strong>Prototype</strong><a href="{SITE_URL}">{SITE_URL.replace("https://", "").rstrip("/")}</a><span class="hint">직접 눌러 보는 프로토타입입니다. 각 항목의 ▶ 링크는 해당 화면으로 바로 이동합니다.</span></p>
 </header>
 <main>
-{render_sections(secs, "print", figures)}
+{render_print(secs, figures)}
 </main>
 </body>
 </html>
