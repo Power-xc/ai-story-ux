@@ -286,6 +286,10 @@ tbody th {
 }
 
 /* figures: real-size prototype screens */
+.figs {
+  display: grid;
+  row-gap: 5mm;
+}
 .shot {
   margin: 0.6mm 0 0;
 }

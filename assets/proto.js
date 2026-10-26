@@ -7,6 +7,8 @@
   var body = document.getElementById("phone-body");
   var titleEl = document.getElementById("phone-title");
   var avatarEl = document.getElementById("phone-avatar");
+  var subEl = document.getElementById("phone-sub");
+  var actEl = document.getElementById("phone-act");
   var infoEl = document.getElementById("scn-info");
   var tabs = Array.prototype.slice.call(
     document.querySelectorAll('#scn-tabs [role="tab"]'),
@@ -41,6 +43,32 @@
       });
     else el.append(c.nodeType ? c : document.createTextNode(c));
   }
+  /* 아이콘: 24 그리드 선 아이콘 한 벌. 장식이므로 항상 aria-hidden */
+  var ICON = {
+    check: "M5 12.5l4.5 4.5L19 7.5",
+    chev: "M9.5 6l6 6-6 6",
+    up: "M12 19V6M6.5 11.5L12 6l5.5 5.5",
+    redo: "M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v4h4",
+    pin: "M9 4h6l-1 5.5 3 3V14H7v-1.5l3-3zM12 14v6",
+    edit: "M4.5 19.5h4l10-10-4-4-10 10zM13 7l4 4",
+    trash: "M5 7h14M10 7V4.5h4V7M7 7l1 12.5h8L17 7",
+    doc: "M7 3.5h7l4 4v13H7zM14 3.5V8h4M10 12.5h5M10 16h5",
+    shield: "M12 3.5l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9v-5z",
+    book: "M5.5 5A1.5 1.5 0 0 1 7 3.5h11.5v14H7a1.5 1.5 0 0 0-1.5 1.5zM5.5 19A1.5 1.5 0 0 0 7 20.5h11.5",
+    more: "M6 12h.01M12 12h.01M18 12h.01",
+  };
+  function icon(name) {
+    var NS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("class", "i i-" + name);
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("aria-hidden", "true");
+    var path = document.createElementNS(NS, "path");
+    path.setAttribute("d", ICON[name]);
+    svg.append(path);
+    return svg;
+  }
+
   function scrollDown(el) {
     el.scrollTop = el.scrollHeight;
   }
@@ -161,7 +189,7 @@
     return h(
       "div",
       { class: "src" },
-      h("p", { class: "src-t" }, "자료 " + id + " · " + s.title),
+      h("p", { class: "src-t" }, icon("doc"), "자료 " + id + " · " + s.title),
       h("p", { class: "src-q" }, s.pre, h("mark", null, s.mark), s.post),
     );
   }
@@ -177,6 +205,19 @@
       },
       "근거 " + id,
     );
+  }
+  // 칩이 줄 끝에 혼자 떨어지지 않게 문장의 마지막 어절과 묶는다
+  function cite(text, chip, cls) {
+    var i = text.lastIndexOf(" ");
+    return [
+      h("span", { class: cls }, text.slice(0, i + 1)),
+      h(
+        "span",
+        { class: "nb" },
+        h("span", { class: cls }, text.slice(i + 1)),
+        chip,
+      ),
+    ];
   }
   function showSource(id, sentence, ev) {
     openSheet(
@@ -210,7 +251,6 @@
     },
   ];
   var STATUS_TXT = { wait: "대기", active: "진행 중", done: "완료" };
-  var STATUS_ICON = { wait: "○", active: "●", done: "✓" };
 
   function mountA() {
     var chat = chatBox();
@@ -221,7 +261,7 @@
       "textarea",
       {
         class: "composer-input",
-        rows: "2",
+        rows: "1",
         readonly: true,
         "aria-label": "보낼 질문(예시)",
       },
@@ -229,8 +269,8 @@
     );
     var send = h(
       "button",
-      { class: "send", type: "button", onclick: start },
-      "보내기",
+      { class: "send", type: "button", "aria-label": "보내기", onclick: start },
+      icon("up"),
     );
     var dock = h(
       "div",
@@ -246,14 +286,12 @@
       if (sent) return;
       sent = true;
       send.disabled = true;
+      input.value = "";
+      input.placeholder = "메시지 보내기";
       chat.append(bubble("user", A_Q));
       var steps = A_STEPS.map(function (s) {
         var st = h("span", { class: "st" }, STATUS_TXT.wait);
-        var ic = h(
-          "span",
-          { class: "ic", "aria-hidden": "true" },
-          STATUS_ICON.wait,
-        );
+        var ic = h("span", { class: "ic", "aria-hidden": "true" });
         return {
           li: h(
             "li",
@@ -287,7 +325,8 @@
 
       function setStep(i, state) {
         steps[i].li.className = "step is-" + state;
-        steps[i].ic.textContent = STATUS_ICON[state];
+        steps[i].ic.textContent = "";
+        if (state === "done") steps[i].ic.append(icon("check"));
         steps[i].st.textContent = STATUS_TXT[state];
       }
       function renderChip(open) {
@@ -305,7 +344,7 @@
           },
           h("span", { class: "chip-l" }, "이렇게 이해했어요"),
           h("span", { class: "chip-t" }, A_INTERP[interp].text),
-          h("span", { class: "chip-edit" }, "고치기"),
+          h("span", { class: "chip-edit" }, "고치기", icon("chev")),
         );
         slot.append(chip);
         if (open) {
@@ -371,6 +410,7 @@
               mount("a");
             },
           },
+          icon("redo"),
           "처음부터 다시",
         ),
       );
@@ -450,19 +490,22 @@
           return h(
             "span",
             { class: "sent" + (s.src ? "" : " no-src") },
-            h("span", { class: "sent-t" }, s.t),
-            s.src
-              ? chipBtn(s.src, open)
-              : h(
-                  "button",
-                  {
-                    class: "ev ev-none",
-                    type: "button",
-                    "aria-haspopup": "dialog",
-                    onclick: open,
-                  },
-                  "근거 없음",
-                ),
+            cite(
+              s.t,
+              s.src
+                ? chipBtn(s.src, open)
+                : h(
+                    "button",
+                    {
+                      class: "ev ev-none",
+                      type: "button",
+                      "aria-haspopup": "dialog",
+                      onclick: open,
+                    },
+                    "근거 없음",
+                  ),
+              "sent-t",
+            ),
           );
         }),
       ),
@@ -569,11 +612,12 @@
           h(
             "p",
             null,
-            t,
-            " ",
-            chipBtn(3, function (e) {
-              showSource(3, t, e);
-            }),
+            cite(
+              t,
+              chipBtn(3, function (e) {
+                showSource(3, t, e);
+              }),
+            ),
           ),
         );
       },
@@ -615,7 +659,7 @@
           h(
             "div",
             { class: "route", role: "note" },
-            h("p", { class: "route-t" }, "확인 경로"),
+            h("p", { class: "route-t" }, icon("shield"), "확인 경로"),
             h(
               "ul",
               null,
@@ -689,6 +733,7 @@
           mount("d");
         },
       },
+      icon("redo"),
       "처음부터 다시",
     );
     body.append(chat, hint);
@@ -713,6 +758,7 @@
         "aria-haspopup": "dialog",
         onclick: openMenu,
       },
+      icon("more"),
     );
     orig.append(menuBtn);
     chat.append(orig);
@@ -766,6 +812,7 @@
                   },
                 },
                 r.label,
+                icon("chev"),
               );
             }),
           ),
@@ -792,11 +839,12 @@
           h(
             "p",
             null,
-            t1,
-            " ",
-            chipBtn(3, function (e) {
-              showSource(3, t1, e);
-            }),
+            cite(
+              t1,
+              chipBtn(3, function (e) {
+                showSource(3, t1, e);
+              }),
+            ),
           ),
         ];
       } else if (r.id === "misread") {
@@ -809,11 +857,12 @@
           h(
             "p",
             null,
-            t1,
-            " ",
-            chipBtn(3, function (e) {
-              showSource(3, t1, e);
-            }),
+            cite(
+              t1,
+              chipBtn(3, function (e) {
+                showSource(3, t1, e);
+              }),
+            ),
           ),
         ];
       } else {
@@ -825,11 +874,12 @@
             null,
             t1,
             " ",
-            t2,
-            " ",
-            chipBtn(4, function (e) {
-              showSource(4, t2, e);
-            }),
+            cite(
+              t2,
+              chipBtn(4, function (e) {
+                showSource(4, t2, e);
+              }),
+            ),
           ),
         ];
       }
@@ -902,20 +952,19 @@
       h("span", { class: "recap-l" }, "지난 이야기"),
       " 서리와 나는 어제 폭풍 속에서 등불을 지켰고, 새벽 종이 울리기 전에 돌아오기로 약속했다.",
     );
-    var head = h(
+    var hero = h(
       "div",
-      { class: "e-head" },
-      h(
-        "div",
-        { class: "e-title" },
-        h("span", { class: "e-name" }, "해무항"),
-        h("span", { class: "rule" }, "세계 규칙 · 해무항에는 마법이 없다"),
-      ),
-      noteBtn,
+      { class: "story-hero" },
+      h("span", { class: "hero-badge" }, "가상 스토리"),
+      h("p", { class: "hero-t" }, "해무항"),
+      h("p", { class: "rule" }, "세계 규칙 · 해무항에는 마법이 없다"),
     );
-    body.append(head, recap, chat, dockEl, status);
+    if (actEl) actEl.append(noteBtn);
+    body.append(chat, dockEl, status);
 
     chat.append(
+      hero,
+      recap,
       h(
         "p",
         { class: "narr" },
@@ -941,16 +990,19 @@
         "aria-haspopup": "dialog",
         onclick: openMenu,
       },
+      icon("more"),
     );
     charMsg.append(menuBtn);
     chat.append(charMsg);
     updateNoteBtn();
     renderDock();
+    scrollDown(chat);
 
     function updateNoteBtn() {
       noteBtn.textContent = "";
       noteBtn.append(
-        "기억 ",
+        icon("book"),
+        "기억",
         h("span", { class: "count" }, String(notes.length)),
       );
     }
@@ -1084,7 +1136,8 @@
                     addTurn(o[0], o[1] || promiseReply());
                   },
                 },
-                o[0],
+                h("span", null, o[0]),
+                icon("chev"),
               );
             }),
           ),
@@ -1115,8 +1168,8 @@
             ta,
             h(
               "button",
-              { class: "send", type: "button", onclick: go },
-              "보내기",
+              { class: "send", type: "button", "aria-label": "보내기", onclick: go },
+              icon("up"),
             ),
           ),
         );
@@ -1155,6 +1208,7 @@
                   },
                 },
                 E_REWRITE[k].label,
+                icon("chev"),
               );
             }),
           ),
@@ -1272,7 +1326,6 @@
           var tags = h(
             "p",
             { class: "tags" },
-            n.pinned ? h("span", { class: "tg" }, "고정됨") : null,
             n.changed
               ? h("span", { class: "tg tg-new" }, "다음 답부터 반영")
               : null,
@@ -1296,12 +1349,14 @@
                     row.querySelectorAll(".mini-btn")[0].focus();
                   },
                 },
-                "고정",
+                icon("pin"),
+                n.pinned ? "고정됨" : "고정",
               ),
               editing
                 ? h(
                     "button",
                     { type: "button", class: "mini-btn", onclick: save },
+                    icon("check"),
                     "저장",
                   )
                 : h(
@@ -1315,6 +1370,7 @@
                         row.querySelector("input").focus();
                       },
                     },
+                    icon("edit"),
                     "수정",
                   ),
               h(
@@ -1332,6 +1388,7 @@
                     if (f) f.focus();
                   },
                 },
+                icon("trash"),
                 "삭제",
               ),
             ),
@@ -1351,7 +1408,7 @@
   /* ---------- 시나리오 정의·전환 ---------- */
   var SCN = {
     a: {
-      title: "가상 도서관 도우미",
+      title: "달빛도서관 도우미",
       head: "A. 과정 보여 주기",
       how: [
         "“보내기”를 눌러 질문을 보내요.",
@@ -1363,7 +1420,7 @@
       mount: mountA,
     },
     b: {
-      title: "가상 도서관 도우미",
+      title: "달빛도서관 도우미",
       head: "B. 근거 연결",
       how: [
         "답의 문장 끝 “근거” 칩을 눌러요.",
@@ -1375,7 +1432,7 @@
       mount: mountB,
     },
     c: {
-      title: "가상 도서관 도우미",
+      title: "달빛도서관 도우미",
       head: "C. 위험 수준별 표시",
       how: [
         "창작 / 사실 / 고위험 주제 / 근거 없음 탭을 바꿔 보세요.",
@@ -1386,7 +1443,7 @@
       mount: mountC,
     },
     d: {
-      title: "가상 도서관 도우미",
+      title: "달빛도서관 도우미",
       head: "D. 사유 있는 복구",
       how: [
         "답을 길게 누르거나 “…” 버튼을 눌러요.",
@@ -1398,10 +1455,11 @@
       mount: mountD,
     },
     e: {
-      title: "가상 스토리 · 해무항",
+      title: "서리",
+      sub: "해무항 · 가상 스토리",
       head: "E. 스토리 모드 (크랙에 옮기면)",
       how: [
-        "위쪽 “지난 이야기” 한 줄이 장면이 이어 갈 내용을 보여 줘요.",
+        "장면 첫머리의 “지난 이야기”가 이어 갈 내용을 보여 줘요.",
         "“기억”에서 관계·사건·약속을 고정·수정·삭제하고, 선택지로 다음 답을 받아 보세요.",
         "캐릭터 메시지의 “…” 메뉴에서 이유를 고르면, 다시 쓴 대사 아래에 따른 설정이 한 줄로 보여요.",
         "아래 관전/선택/직접 쓰기 다이얼로 개입 수준을 바꿔요.",
@@ -1419,9 +1477,13 @@
     closeSheet();
     current = id;
     body.textContent = "";
+    var story = id === "e";
+    phone.classList.toggle("is-story", story);
     titleEl.textContent = s.title;
+    if (subEl) subEl.textContent = s.sub || "가상 AI 도우미 · 예시 자료로만 답해요";
+    if (actEl) actEl.textContent = "";
     if (avatarEl)
-      avatarEl.className = "avatar" + (id === "e" ? " avatar-harbor" : "");
+      avatarEl.className = "avatar " + (story ? "av-seori" : "av-library");
     tabs.forEach(function (t) {
       var on = t.getAttribute("data-scn") === id;
       t.setAttribute("aria-selected", on ? "true" : "false");

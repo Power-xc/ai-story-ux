@@ -218,7 +218,7 @@ def print_row(h3, body, figures):
     if fig:
         # the picture sits right of the text it illustrates
         return (f'<article class="row has-fig"><div class="row-t">{head}</div>'
-                f'<div class="row-d"><div class="row-x">{text}</div>{fig}</div></article>')
+                f'<div class="row-d"><div class="row-x">{text}</div><div class="figs">{fig}</div></div></article>')
     return f'<article class="row"><div class="row-t">{head}</div><div class="row-d">{text}</div></article>'
 
 
@@ -265,6 +265,7 @@ def main():
 <link rel="stylesheet" href="{FONT_CSS}">
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/proto.css">
+<link rel="stylesheet" href="assets/proto-parts.css">
 </head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>
@@ -302,7 +303,7 @@ def main():
   <h1>AI Story UX 사전 과제</h1>
   <p class="meta"><strong>박강근</strong><span>Senior Product Designer</span><span>{esc(title.replace(" 사전 과제", ""))}</span><span>2026.10</span></p>
   <p class="links"><strong>Prototype</strong><a href="{SITE_URL}">{SITE_URL.replace("https://", "").rstrip("/")}</a><span class="hint">각 항목의 ▶ 링크를 누르면 그 화면에서 바로 눌러 볼 수 있습니다.</span></p>
-  <p class="note">그림은 프로토타입 화면을 실제 기기 크기(iPhone 16, 393×852pt)로 찍은 것입니다. 설명을 위해 새로 만든 가상 화면이며, 실제 크랙 화면이 아닙니다.</p>
+  <p class="note">그림은 프로토타입 화면을 실제 기기 크기(iPhone 16, 393×852pt)로 찍은 것입니다. 설명을 위해 새로 만든 가상 화면이며, 실제 크랙 화면이 아닙니다. 캐릭터와 표지 그림은 생성형 AI로 만들었습니다.</p>
 </header>
 <main>
 {render_print(secs, figures)}

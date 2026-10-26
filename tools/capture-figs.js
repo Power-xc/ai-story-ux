@@ -11,7 +11,8 @@ async (page) => {
     .browser()
     .newContext({
       deviceScaleFactor: 3,
-      viewport: { width: 1280, height: 1000 },
+      // tall enough that a full phone (852) fits below the section heading
+      viewport: { width: 1280, height: 1200 },
       reducedMotion: "reduce",
     });
   const p = await ctx.newPage();
@@ -19,6 +20,7 @@ async (page) => {
     ".phone-wrap{zoom:1!important}.phone{box-shadow:none!important}" +
     ".scrim{background:rgb(17 17 17 / .28)!important}" +
     ".sheet{animation:none!important;scrollbar-width:none}" +
+    ".chat{scrollbar-width:none}" +
     ".crop .sheet{border-radius:0!important}.crop .home-ind{visibility:hidden}";
   const go = async (hash, crop) => {
     await p.goto(BASE + "?v=" + Date.now() + "#proto-" + hash);
@@ -61,7 +63,8 @@ async (page) => {
           .bottom,
       card,
     );
-    return { ...s, height: bottom - s.y + PAD + 6 };
+    // start 1px in so the page behind the sheet never shows as a sliver
+    return { ...s, y: s.y + 1, height: bottom - s.y - 1 + PAD };
   };
   const shot = (name, clip) =>
     p.screenshot({ path: OUT + name + ".png", clip });
@@ -89,6 +92,14 @@ async (page) => {
 
   await go("e-memory", true);
   await shot("e-memory", await sheetCrop(".phone .sheet .note"));
+
+  // the scene opens on the cover and the recap of the last session
+  await go("e");
+  await p.evaluate(() => {
+    document.querySelector(".phone .chat").scrollTop = 0;
+  });
+  await p.waitForTimeout(200);
+  await shot("e-open", await p.locator(".phone").boundingBox());
 
   // the fix in one screen: the old line, the reason, the rewrite and the setting it followed
   await go("e");
